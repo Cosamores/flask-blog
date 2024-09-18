@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Posts{% endblock %}</h1>
+{% if g.user %}
+<a class="action" href="{{ url_for('blog.create') }}">New</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% for post in posts %}
+<div class="container">
+  {% if post['avatar'] %}
+  <img
+    src="{{ url_for('static', filename='avatars/' ~ post['avatar']) }}"
+    alt="Avatar"
+    class="post-avatar"
+  />
+  {% endif %}
+
+  <article class="post">
+    <header>
+      <div>
+        <h1>{{ post['title'] }}</h1>
+        <div class="about">
+          by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}
+        </div>
+      </div>
+    </header>
+    <p class="body">{{ post['body'] }}</p>
+    <div class="like-section">
+      <form action="{{ url_for('blog.like', post_id=post['id']) }}" method="post">
+        <button class="{% if post['liked'] %}unlike-btn{% else %}like-btn{% endif %}" type="submit">
+          {% if post['liked'] %}
+          Unlike
+          {% else %}
+          Like
+          {% endif %}
+        </button>
+      </form>
+      <span>{{ post['like_count'] }} likes</span>
+    </div>
+  </article>
+</div>
+{% if g.user and g.user['id'] == post['author_id'] %}
+<a class="edit" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+{% endif %}
+{% if not loop.last %}
+<hr />
+{% endif %}
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %} - Blog</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <nav>
+      <h1>Cosamores Blog</h1>
+      {% if g.user %}
+      <ul>
+        <li class="user">
+          {% if g.user['avatar'] %}
+          <img
+            src="{{ url_for('static', filename='avatars/' ~ g.user['avatar']) }}"
+            alt="Avatar"
+          />
+          {% endif %}
+          <span>{{ g.user['username'] }}</span>
+        </li>
+        <li class="logout"><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+      </ul>
+      {% else %}
+      <ul>
+        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+        <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+      </ul>
+      {% endif %}
+    </nav>
+    <section class="content">
+      <header>{% block header %}{% endblock %}</header>
+      {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+      {% endfor %} {% block content %}{% endblock %}
+    </section>
+  </body>
+</html>
